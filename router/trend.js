@@ -10,6 +10,8 @@ router.post('/sendComment',Trend.sendComment)
 router.post('/deleteComment',Trend.deleteComment)
 router.get('/getComment',Trend.getComment)
 router.post('/sendReply',Trend.sendReply)
+router.get('/getReply',Trend.getReply)
+router.post('/deleteReply',Trend.deleteReply)
 router.get('/getAllTrend',Trend.getAllTrend)
 
 module.exports = router;

@@ -40,7 +40,7 @@ let getAllTrend = async (req,res)=>{
     }
 }
 
-//获取动态
+//根据id获取动态
 let getTrend = async (req,res)=>{
     let {userid} = req.query;
     let sql = `select * from trend where userid=?`;
@@ -118,6 +118,32 @@ let sendReply= async (req,res)=>{
     }
 }
 
+//删除回复
+let deleteReply= async (req,res)=>{
+    let {replyid} = req.body;
+    let sql = `delete from trendreply where replyid=?`;
+    let sqlArr =  [replyid];
+    let result = await queryFN(sql,sqlArr);
+    if(result.affectedRows == 1){
+        res.send(returnMsg(0,"删除回复成功"))
+    }else{
+        res.send(returnMsg(1,"删除回复失败"))
+    }
+}
+
+//获取全部回复
+let getReply  = async (req,res)=>{
+    let {commentid} = req.query;
+    let sql = `select * from trendreply where commentid=?`;
+    let sqlArr =  [commentid];
+    let result = await queryFN(sql,sqlArr);
+    if(result.length!=0){
+        res.send(returnMsg(0,"获取回复成功",result))
+    }else{
+        res.send(returnMsg(1,"获取回复失败"))
+    }
+}
+
 module.exports = {
     sendTrend,
     deleteTrend,
@@ -127,5 +153,7 @@ module.exports = {
     deleteComment,
     getComment,
     sendReply,
-    getAllTrend
+    getAllTrend,
+    getReply,
+    deleteReply
 }

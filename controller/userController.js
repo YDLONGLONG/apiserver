@@ -90,7 +90,7 @@ let getUserInfo = (userid)=>{
     return queryFN(sql,sqlArr);
 }
 
-//获取用户的详情
+//获取用户的头像
 let getUserAvatar = async (req,res)=>{
     let userid = req.query.userid;
     let sql = `select avatar from user where userid=?`;
@@ -375,7 +375,7 @@ let bindEmail = async (req,res)=>{
 
 //绑定用户手机号接口
 let bindPhone = async (req,res)=>{
-    let {userid,phone} = req.query;
+    let {userid,phone} = req.body;
     let sql = `update user set phone=? where userid=?`;
     let sqlArr = [phone,userid];
     let result = await queryFN(sql,sqlArr);
@@ -434,7 +434,8 @@ let uploadMoreImg=async(req,res)=>{
         }
         //批量存储到数据库
         let result = await queryFN(sql,sqlArr)
-        if(result.affectedRows == 1){
+        console.log(result)
+        if(result.affectedRows == 3){
             res.send(returnMsg(0,"图片上传成功",req.files))
         }else{
             res.send(returnMsg(1,"图片上传失败"))
