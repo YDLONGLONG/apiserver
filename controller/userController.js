@@ -10,6 +10,16 @@ let getUser = (data)=>{
     return queryFN(sql,sqlArr);
 }
 
+//获取用户信息
+let GetUser = async (req,res)=>{
+    let {userid} = req.query;
+    let result = await getUser(userid);
+    let user_id = result[0].userid;
+    let result1 = await getUserInfo(user_id);
+    result[0].userinfo = result1[0];
+    res.send(returnMsg(0,"获取用户信息成功",result))
+}
+
 //创建用户详情表
 let createUserInfo = (userid)=>{
     let sql = `insert into userinfo(userid,createtime) values(?,?)`;
@@ -230,8 +240,9 @@ let isLogin = (req, res) => {
 
 //修改用户名称
 let setUserName = async (userid,username)=>{
+    let result = await getUser(userid);
     let sql = `update user set username=? where userid=?`;
-    let sqlArr = [username,userid];
+    let sqlArr = [username||result[0].username,userid];
     let res = await queryFN(sql,sqlArr);
     if(res.affectedRows==1){
         return true;
@@ -242,8 +253,12 @@ let setUserName = async (userid,username)=>{
 
 //修改用户详细信息
 let setUserInfo = async (userid,age,sex,birthday,address)=>{
+    let result = await getUser(userid);
+    let user_id = result[0].userid;
+    let result1 = await getUserInfo(user_id);
+    result[0].userinfo = result1[0];
     let sql = `update userinfo set age=?,sex=?,birthday=?,address=? where userid=? `;
-    let sqlArr = [age,sex,birthday,address,userid]
+    let sqlArr = [age||result[0].userinfo.age,sex||result[0].userinfo.sex,birthday||result[0].userinfo.birthday,address||result[0].userinfo.address,userid]
     let res = await queryFN(sql,sqlArr);
     if(res.affectedRows == 1){
         let user = await getUser(userid);
@@ -257,13 +272,9 @@ let setUserInfo = async (userid,age,sex,birthday,address)=>{
 let updateUserInfo = async (req,res)=>{
     let {userid,username,age,sex,birthday,address} = req.body;
     let result = await setUserName(userid,username);
-    if(result){
-        let data = await setUserInfo(userid,age,sex,birthday,address);
-        if(data.length){
-            res.send(returnMsg(0,"用户信息修改成功",data))
-        }else{
-            res.send(returnMsg(1,"用户信息修改失败"))
-        }
+    let data = await setUserInfo(userid,age,sex,birthday,address);
+    if(data.length || result){
+        res.send(returnMsg(0,"用户信息修改成功",data))
     }else{
         res.send(returnMsg(1,"用户信息修改失败"))
     }
@@ -435,7 +446,7 @@ let uploadMoreImg=async(req,res)=>{
         //批量存储到数据库
         let result = await queryFN(sql,sqlArr)
         console.log(result)
-        if(result.affectedRows == 3){
+        if(result.affectedRows == 1){
             res.send(returnMsg(0,"图片上传成功",req.files))
         }else{
             res.send(returnMsg(1,"图片上传失败"))
@@ -457,5 +468,6 @@ module.exports = {
     emailCode,
     codeLogin,
     forgetPassword,
-    getUserAvatar
+    getUserAvatar,
+    GetUser
 }

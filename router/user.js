@@ -20,5 +20,6 @@ router.post('/emailCode',User.emailCode)
 router.post('/codeLogin',User.codeLogin)
 router.post('/forgetPassword',User.forgetPassword)
 router.get('/getUserAvatar',User.getUserAvatar)
+router.get('/GetUser',User.GetUser)
 
 module.exports = router;
