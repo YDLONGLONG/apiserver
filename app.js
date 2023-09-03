@@ -36,4 +36,4 @@ app.use(bodyParser.json());
 
 app.use('/user', userRouter);
 app.use('/trend', trendRouter);
-server.listen(3000,()=>{console.log("各单位请注意,3000端口已被征用")});
+server.listen(4001,()=>{console.log("各单位请注意,4001端口已被征用")});

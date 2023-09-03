@@ -108,7 +108,7 @@ let getComment  = async (req,res)=>{
 //回复评论
 let sendReply= async (req,res)=>{
     let {commentid,commentator,you,content} = req.body;
-    let sql = `insert into trendreply(commentid,commentator,you,content,createdate) values(?,?,?,?,?)`;
+    let sql = `insert into trendreply(commentid,commentator,you,reply_content,reply_createdate) values(?,?,?,?,?)`;
     let sqlArr =  [commentid,commentator,you,content,new Date()];
     let result = await queryFN(sql,sqlArr);
     if(result.affectedRows == 1){
@@ -144,6 +144,39 @@ let getReply  = async (req,res)=>{
     }
 }
 
+//获取全部评论回复
+let getAllCR  = async (req,res)=>{
+    let {commentid} = req.query;
+    let sql = `select trendcomment.*,user.username from trendcomment,user where user.username=trendcomment.commentator and commentid=?`;
+    let sqlArr =  [commentid];
+    let result = await queryFN(sql,sqlArr);
+
+    let sql1 = `select trendreply.*,user.username from trendreply,user where user.username=trendreply.you and commentid=?`;
+    let sqlArr1 =  [commentid];
+    let result1 = await queryFN(sql1,sqlArr1);
+    result[0].reply = result1
+    
+    if(result.length!=0){
+        res.send(returnMsg(0,"获取评论成功",result))
+    }else{
+        res.send(returnMsg(1,"获取评论失败"))
+    }
+}
+
+//查找动态根据标题或者内容
+let searchTrend = async (req,res)=>{
+    let {keyWord,nowpage} = req.query;
+    let pagesize = 5;
+    let sql = `select * from trend where title like '%${keyWord}%' or content like '%${keyWord}%' ORDER BY trendid DESC limit ?,?`;
+    let sqlArr =  [pagesize*nowpage,pagesize];
+    let result = await queryFN(sql,sqlArr);
+    if(result.length!=0){
+        res.send(returnMsg(0,"查找动态成功",result))
+    }else{
+        res.send(returnMsg(1,"查找动态失败"))
+    }
+}
+
 module.exports = {
     sendTrend,
     deleteTrend,
@@ -155,5 +188,7 @@ module.exports = {
     sendReply,
     getAllTrend,
     getReply,
-    deleteReply
+    deleteReply,
+    getAllCR,
+    searchTrend
 }

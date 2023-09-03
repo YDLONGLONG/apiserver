@@ -13,5 +13,7 @@ router.post('/sendReply',Trend.sendReply)
 router.get('/getReply',Trend.getReply)
 router.post('/deleteReply',Trend.deleteReply)
 router.get('/getAllTrend',Trend.getAllTrend)
+router.get('/getAllCR',Trend.getAllCR)
+router.get('/searchTrend',Trend.searchTrend)
 
 module.exports = router;

@@ -22,7 +22,7 @@ let GetUser = async (req,res)=>{
 
 //创建用户详情表
 let createUserInfo = (userid)=>{
-    let sql = `insert into userinfo(userid,createtime) values(?,?)`;
+    let sql = `insert into userinfo(userid,createdate) values(?,?)`;
     let sqlArr =  [userid,new Date()];
     return queryFN(sql,sqlArr);
 }
